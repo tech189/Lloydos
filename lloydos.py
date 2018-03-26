@@ -44,9 +44,11 @@ with open("test.ld", mode="r") as file:
         line_number += 1
         #print("DEBUG: Line " + line_number + " is --" + line + "--")
         if line == "\n":
-            print("DEBUG: Empty line on line " + str(line_number))
+            continue
+            #print("DEBUG: Empty line on line " + str(line_number))
         elif line[0] == "#":
-            print("DEBUG: Comment on line " + str(line_number))
+            continue
+            #print("DEBUG: Comment on line " + str(line_number))
         elif line[0] == "ὁ":
             #print("DEBUG: Variable statement on line " + str(line_number)) #assuming we won't have variables in other genders
             if line[1:17] == " λογος ὀνομαζων ":
@@ -84,4 +86,4 @@ with open("test.ld", mode="r") as file:
                 while True:
                     print(strings[string_name])
         else:
-            print("DEBUG: Sytax error on line " + str(line_number))
+            print("ERROR: Sytax error on line " + str(line_number))
