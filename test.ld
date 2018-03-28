@@ -1,7 +1,7 @@
 ὁ λογος ὀνομαζων «hello» ἐστι «Hello, world!»;
 εἰπε τον λογον ὀνομαζοντα «hello»;
 
-ὁ λογος ὀνομαζων «hello» ἐστι «Goodbye, world!»;
+ὁ λογος ὀνομαζων «hello» ἐστι «Hello, tech189!»;
 εἰπε τον λογον ὀνομαζοντα «hello»;
 
 ὁ λογος ὀνομαζων «test» ἐστι «Test test test»;
@@ -16,4 +16,5 @@
 #    εἰπε τον λογον ὀνομαζοντα «hello»;
 #    εἰπε τον ἀριθμον ὀνομαζοντα «number»;
 
-aposdjfihuk
+
+#this line should raise a syntax error
