@@ -7,8 +7,11 @@
 ὁ λογος ὀνομαζων «test» ἐστι «Test test test»;
 εἰπε τον λογον ὀνομαζοντα «test»;
 
-ὁ ἀριθμος ὀνομαζων «number» ἐστι «1»;
+ὁ ἀριθμος ὀνομαζων «number» ἐστι «σμαʹ»;
 εἰπε τον ἀριθμον ὀνομαζοντα «number»;
+
+ὁ ἀριθμος ὀνομαζων «other number» ἐστι «Ͳϙθʹ»;
+εἰπε τον ἀριθμον ὀνομαζοντα «other number»;
 
 #λεγε τον λογον ὀνομαζοντα «hello»;
 
@@ -16,5 +19,4 @@
 #    εἰπε τον λογον ὀνομαζοντα «hello»;
 #    εἰπε τον ἀριθμον ὀνομαζοντα «number»;
 
-
-#this line should raise a syntax error
+#if uncommented, this line should raise a syntax error

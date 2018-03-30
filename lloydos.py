@@ -1,54 +1,53 @@
-import re, math, sys, logging
+import re, sys, logging
 
-help_text = "aldfj"
+help_text = "Sytax:\n\tlloydos [filename] [options]\nOptions:\n\t-d\tDebug mode\tExtra information is printed"
 
 #can't go higher than 999
 numerals = {
-    "0": "οὐδεν",
-    "1": "α",
-    "2": "β",
-    "3": "γ",
-    "π": math.pi,
-    "4": "δ",
-    "5": "ε",
-    "6": "ϝ",
-    "7": "ζ",
-    "8": "η",
-    "9": "θ",
-    "g": "9.81",
-    "10": "ι",
-    "20": "κ",
-    "30": "λ",
-    "40": "μ",
-    "50": "ν",
-    "60": "ξ",
-    "70": "ο",
-    "80": "π",
-    "90": "ϙ",
-    "100": "ρ",
-    "200": "σ",
-    "300": "τ",
-    "400": "υ",
-    "500": "φ",
-    "600": "χ",
-    "700": "ψ",
-    "800": "ω",
-    "900": "Ͳ",
-   #"Ϡ": marker for 1000 so maybe Ϡα = 1000?
-    "c": 299792458
+    "οὐδεν": 0,
+    "α": 1,
+    "β": 2,
+    "γ": 3,
+    "δ": 4,
+    "ε": 5,
+    "ϝ": 6,
+    "ζ": 7,
+    "η": 8,
+    "θ": 9,
+    "ι": 10,
+    "κ": 20,
+    "λ": 30,
+    "μ": 40,
+    "ν": 50,
+    "ξ": 60,
+    "ο": 70,
+    "π": 80,
+    "ϙ": 90,
+    "ρ": 100,
+    "σ": 200,
+    "τ": 300,
+    "υ": 400,
+    "φ": 500,
+    "χ": 600,
+    "ψ": 700,
+    "ω": 800,
+    "Ͳ": 900
+    #"Ϡ": marker for 1000 so maybe Ϡα = 1000?
+    #"g": 9.81
+    #"c": 299792458
 }
 
 def run_code(file_name, options):
     if "-d" in options:
         logging.getLogger().setLevel(logging.DEBUG)
         logging.debug(" Command line options: " + str(options))
-    with open(file_name, mode="r") as file:
+    with open(file_name, mode="r", encoding="utf8") as file:
         line_number = 0
         strings = {}
         numbers = {}
         for line in file:
             line_number += 1
-            #logging.debug(" Line " + str(line_number) + " is --" + line + "--")
+            #logging.debug(" Line " + str(line_number) + " is «" + line + "»")
             if line == "\n":
                 logging.debug(" Empty line on line " + str(line_number))
                 continue
@@ -68,11 +67,20 @@ def run_code(file_name, options):
                     logging.debug(" Number statement on line " + str(line_number))
                     number_name = re.search("«(.*)» ", line[17:]).group(1)
                     if re.search("ι «(.*)»;", line[17:]).group(1).isdigit() == False:
-                        print("DEBUG: Not a digit, variable not created")
+                        logging.debug(" Not a digit, variable not created")
+                        try:
+                            input = re.search("ι «(.*)ʹ»;", line[17:]).group(1)
+                            number = 0
+                            for i in input:
+                                if i in numerals:
+                                    number = number + numerals[i]
+                            numbers[number_name] = number
+                        except AttributeError:
+                            logging.error(" Syntax error on line " + str(line_number) +  ": entering numerals (use a ʹ)")
                     else:
                         number_var = re.search("ι «(.*)»;", line[17:]).group(1)
                         numbers[number_name] = number_var
-                    logging.debug(" Number statement equates \"" + number_name + "\" to the value " + number_var + "")
+                        logging.debug(" Number statement equates \"" + number_name + "\" to the value " + number_var + "")
                     #save string_name and string_var to a dictionary
                 else:
                     print("Syntax error on line " + str(line_number))
@@ -118,9 +126,9 @@ def run_code(file_name, options):
                                 logging.info(" Infinite print statement stopped")
                                 exit()
                     except KeyError:
-                        logging.error("  No such number variable as «" + number_name + "» (line " + str(line_number) + ")")
+                        logging.error(" No such number variable as «" + number_name + "» (line " + str(line_number) + ")")
             else:
-                logging.error("  Sytax error on line " + str(line_number))
+                logging.error(" Sytax error on line " + str(line_number))
     logging.debug(" Number variables: " + str(numbers))
     logging.debug(" String variables: " + str(strings))
 
