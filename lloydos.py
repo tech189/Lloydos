@@ -1,10 +1,10 @@
 import re, sys, logging
 
-help_text = "Sytax:\n\tlloydos [filename] [options]\nOptions:\n\t-d\tDebug mode\tExtra information is printed"
+help_text = "Usage:\n\tlloydos.py [filename] [options]\nOptions:\n\t-d\tDebug mode\tdisplays a lot of detailed information about each line of code"
 
 #can't go higher than 999
 numerals = {
-    "οὐδεν": 0,
+    #"οὐδεν": 0,
     "α": 1,
     "β": 2,
     "γ": 3,
@@ -66,15 +66,28 @@ def run_code(file_name, options):
                 elif line[1:19] == " ἀριθμος ὀνομαζων ":
                     logging.debug(" Number statement on line " + str(line_number))
                     number_name = re.search("«(.*)» ", line[17:]).group(1)
+                    #print(str(re.search("ι «(.*)»;", line[17:]).group(1).isdigit()) + "line" + str(line_number))
                     if re.search("ι «(.*)»;", line[17:]).group(1).isdigit() == False:
-                        logging.debug(" Not a digit, variable not created")
                         try:
                             input = re.search("ι «(.*)ʹ»;", line[17:]).group(1)
                             number = 0
+                            #print("input is " + input)
+                            there_are_numerals = 0
                             for i in input:
                                 if i in numerals:
-                                    number = number + numerals[i]
-                            numbers[number_name] = number
+                                    logging.debug(" Greek numerals found")
+                                elif i not in numerals:
+                                    logging.error(" Not a Greek numeral, variable not created (line " + str(line_number) + ")")
+                                    there_are_numerals = False
+                                    break
+                            if there_are_numerals is False:
+                                #print("ok so there are no numerals")
+                                continue
+                            else:
+                                for i in input:
+                                    if i in numerals:
+                                        number = number + numerals[i]
+                                numbers[number_name] = number
                         except AttributeError:
                             logging.error(" Syntax error on line " + str(line_number) +  ": entering numerals (use a ʹ)")
                     else:
