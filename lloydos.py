@@ -69,7 +69,7 @@ def run_code(file_name, options):
                     #print(str(re.search("ι «(.*)»;", line[17:]).group(1).isdigit()) + "line" + str(line_number))
                     if re.search("ι «(.*)»;", line[17:]).group(1).isdigit() == False:
                         try:
-                            input = re.search("ι «(.*)ʹ»;", line[17:]).group(1)
+                            input = re.search("ι «(.*)ʹ»;", line[17:]).group(1)
                             number = 0
                             #print("input is " + input)
                             there_are_numerals = 0
@@ -89,7 +89,7 @@ def run_code(file_name, options):
                                         number = number + numerals[i]
                                 numbers[number_name] = number
                         except AttributeError:
-                            logging.error(" Syntax error on line " + str(line_number) +  ": entering numerals (use a ʹ)")
+                            logging.error(" Syntax error on line " + str(line_number) +  ": entering numerals (use a ʹ)")
                     else:
                         number_var = re.search("ι «(.*)»;", line[17:]).group(1)
                         numbers[number_name] = number_var
