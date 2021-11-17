@@ -1,3 +1,8 @@
+# resources:
+# http://lisperator.net/pltut/
+# https://medium.freecodecamp.org/the-programming-language-pipeline-91d3f449c919
+# https://tomassetti.me/resources-create-programming-languages/#parsing-tutorials
+
 import re, sys, logging
 
 help_text = "Usage:\n\tlloydos.py [filename] [options]\nOptions:\n\t-d\tDebug mode\tdisplays a lot of detailed information about each line of code"
@@ -77,7 +82,7 @@ def run_code(file_name, options):
                                 if i in numerals:
                                     logging.debug(" Greek numerals found")
                                 elif i not in numerals:
-                                    logging.error(" Not a Greek numeral, variable not created (line " + str(line_number) + ")")
+                                    logging.error(" Not a Greek numeral, no assignment made (line " + str(line_number) + ")")
                                     there_are_numerals = False
                                     break
                             if there_are_numerals is False:
@@ -145,6 +150,7 @@ def run_code(file_name, options):
     logging.debug(" Number variables: " + str(numbers))
     logging.debug(" String variables: " + str(strings))
 
+# TODO replace with argparse
 if len(sys.argv) < 2:
     print(help_text)
 elif len(sys.argv) == 2:
