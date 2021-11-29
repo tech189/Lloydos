@@ -4,6 +4,7 @@
 # https://tomassetti.me/resources-create-programming-languages/#parsing-tutorials
 
 import re, sys, logging
+import argparse
 
 help_text = "Usage:\n\tlloydos.py [filename] [options]\nOptions:\n\t-d\tDebug mode\tdisplays a lot of detailed information about each line of code"
 
@@ -42,34 +43,38 @@ numerals = {
     #"c": 299792458
 }
 
-def run_code(file_name, options):
-    if "-d" in options:
-        logging.getLogger().setLevel(logging.DEBUG)
-        logging.debug(" Command line options: " + str(options))
+logger = logging.getLogger()
+handler = logging.StreamHandler(sys.stdout)
+
+formatter = logging.Formatter("%(levelname)s: %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+def run_code(file_name):
     with open(file_name, mode="r", encoding="utf8") as file:
         line_number = 0
         strings = {}
         numbers = {}
         for line in file:
             line_number += 1
-            #logging.debug(" Line " + str(line_number) + " is «" + line + "»")
+            #logger.debug("Line " + str(line_number) + " is «" + line + "»")
             if line == "\n":
-                logging.debug(" Empty line on line " + str(line_number))
+                logger.debug("Empty line on line " + str(line_number))
                 continue
             elif line[0] == "#":
-                logging.debug(" Comment on line " + str(line_number))
+                logger.debug("Comment on line " + str(line_number))
                 continue
             elif line[0] == "ὁ":
-                logging.debug(" Variable statement on line " + str(line_number)) #assuming we won't have variables in other genders
+                logger.debug("Variable statement on line " + str(line_number)) #assuming we won't have variables in other genders
                 if line[1:17] == " λογος ὀνομαζων ":
-                    logging.debug(" String statement on line " + str(line_number))
+                    logger.debug("String statement on line " + str(line_number))
                     string_name = re.search("«(.*)» ", line[17:]).group(1)
                     string_var = re.search("ι «(.*)»;", line[17:]).group(1)
-                    logging.debug(" String statement equates \"" + string_name + "\" as \"" + string_var + "\"")
+                    logger.debug("String statement equates \"" + string_name + "\" as \"" + string_var + "\"")
                     #save string_name and string_var to a dictionary
                     strings[string_name] = string_var
                 elif line[1:19] == " ἀριθμος ὀνομαζων ":
-                    logging.debug(" Number statement on line " + str(line_number))
+                    logger.debug("Number statement on line " + str(line_number))
                     number_name = re.search("«(.*)» ", line[17:]).group(1)
                     #print(str(re.search("ι «(.*)»;", line[17:]).group(1).isdigit()) + "line" + str(line_number))
                     if re.search("ι «(.*)»;", line[17:]).group(1).isdigit() == False:
@@ -80,9 +85,9 @@ def run_code(file_name, options):
                             there_are_numerals = 0
                             for i in input:
                                 if i in numerals:
-                                    logging.debug(" Greek numerals found")
+                                    logger.debug("Greek numerals found")
                                 elif i not in numerals:
-                                    logging.error(" Not a Greek numeral, no assignment made (line " + str(line_number) + ")")
+                                    logger.error("Not a Greek numeral, no assignment made (line " + str(line_number) + ")")
                                     there_are_numerals = False
                                     break
                             if there_are_numerals is False:
@@ -94,16 +99,17 @@ def run_code(file_name, options):
                                         number = number + numerals[i]
                                 numbers[number_name] = number
                         except AttributeError:
-                            logging.error(" Syntax error on line " + str(line_number) +  ": entering numerals (use a ʹ)")
+                            logger.error("Syntax error on line " + str(line_number) +  ": entering numerals (use a ʹ)")
                     else:
                         number_var = re.search("ι «(.*)»;", line[17:]).group(1)
                         numbers[number_name] = number_var
-                        logging.debug(" Number statement equates \"" + number_name + "\" to the value " + number_var + "")
+                        # TODO why does this debug never run?
+                        logger.debug("Number statement equates \"" + number_name + "\" to the value " + number_var + "")
                     #save string_name and string_var to a dictionary
                 else:
                     print("Syntax error on line " + str(line_number))
             elif line[0:5] == "εἰπε ":
-                logging.debug(" Print statement on line " + str(line_number))
+                logger.debug("Print statement on line " + str(line_number))
                 #retrieve from dictionary the string and print it!
                 #print("-"+line[5:28]+"-")
                 if line[5:26] == "τον λογον ὀνομαζοντα ":
@@ -111,13 +117,13 @@ def run_code(file_name, options):
                     try:
                         print(strings[string_name])
                     except KeyError:
-                        logging.error(" No such string variable as «" + string_name + "»")
+                        logger.error("No such string variable as «" + string_name + "»")
                 elif line[5:28] == "τον ἀριθμον ὀνομαζοντα ":
                     number_name = re.search("«(.*)»;", line[26:]).group(1)
                     try:
                         print(numbers[number_name])
                     except KeyError:
-                        logging.error(" No such number variable as «" + number_name + "» (line " + str(line_number) + ")")
+                        logger.error("No such number variable as «" + number_name + "» (line " + str(line_number) + ")")
             elif line[0:5] == "λεγε ":
                 #print("Infinite print statement on line " + str(line_number))
                 #retrieve from dictionary the string and print it!
@@ -129,10 +135,10 @@ def run_code(file_name, options):
                             try:
                                 print(strings[string_name])
                             except KeyboardInterrupt:
-                                logging.info(" Infinite print statement stopped")
+                                logger.info("Infinite print statement stopped")
                                 exit()
                     except KeyError:
-                        logging.error(" No such string variable as «" + string_name + "» (line " + str(line_number) + ")")
+                        logger.error("No such string variable as «" + string_name + "» (line " + str(line_number) + ")")
                 elif line[5:28] == "τον ἀριθμον ὀνομαζοντα ":
                     number_name = re.search("«(.*)»;", line[17:]).group(1)
                     try:
@@ -141,28 +147,42 @@ def run_code(file_name, options):
                             try:
                                 print(numbers[number_name])
                             except KeyboardInterrupt:
-                                logging.info(" Infinite print statement stopped")
+                                logger.info("Infinite print statement stopped")
                                 exit()
                     except KeyError:
-                        logging.error(" No such number variable as «" + number_name + "» (line " + str(line_number) + ")")
+                        logger.error("No such number variable as «" + number_name + "» (line " + str(line_number) + ")")
             else:
-                logging.error(" Sytax error on line " + str(line_number))
-    logging.debug(" Number variables: " + str(numbers))
-    logging.debug(" String variables: " + str(strings))
+                logger.error("Sytax error on line " + str(line_number))
+    logger.debug("Number variables: " + str(numbers))
+    logger.debug("String variables: " + str(strings))
 
-# TODO replace with argparse
-if len(sys.argv) < 2:
-    print(help_text)
-elif len(sys.argv) == 2:
+# # TODO replace with argparse
+# if len(sys.argv) < 2:
+#     print(help_text)
+# elif len(sys.argv) == 2:
+#     try:
+#         run_code(sys.argv[1], [])
+#         logging.getLogger().setLevel(logging.INFO)
+#     except FileNotFoundError:
+#         print("Input file \"" + sys.argv[1] + "\" does not exist")
+# elif len(sys.argv) > 2:
+#     try:
+#         run_code(sys.argv[1], sys.argv[2:])
+#     except FileNotFoundError:
+#         print("Input file \"" + sys.argv[1] + "\" does not exist")
+# else:
+#     print(help_text)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Interprets files written in the esoteric programming language Lloydos")
+    parser.add_argument("file")
+    parser.add_argument("--debug", help="print calculations etc. for debugging", action="store_true")
+    args = parser.parse_args()
+
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+    
     try:
-        run_code(sys.argv[1], [])
-        logging.getLogger().setLevel(logging.INFO)
+        run_code(args.file)
     except FileNotFoundError:
-        print("Input file \"" + sys.argv[1] + "\" does not exist")
-elif len(sys.argv) > 2:
-    try:
-        run_code(sys.argv[1], sys.argv[2:])
-    except FileNotFoundError:
-        print("Input file \"" + sys.argv[1] + "\" does not exist")
-else:
-    print(help_text)
+        logger.error("Input file \"" + args.file + "\" does not exist")
